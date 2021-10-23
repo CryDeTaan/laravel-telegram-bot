@@ -20,6 +20,12 @@
                     <jet-section-border />
                 </div>
 
+                <div v-if="$page.props.jetstream.canUpdateProfileInformation">
+                    <telegram-notifications-form :telegramCode="telegramCode" class="mt-10 sm:mt-0" />
+
+                    <jet-section-border />
+                </div>
+
                 <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication">
                     <two-factor-authentication-form class="mt-10 sm:mt-0" />
 
@@ -47,11 +53,13 @@
     import TwoFactorAuthenticationForm from '@/Pages/Profile/Partials/TwoFactorAuthenticationForm.vue'
     import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm.vue'
     import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm.vue'
+    import TelegramNotificationsForm from "./Partials/TelegramNotificationsForm";
 
     export default defineComponent({
-        props: ['sessions'],
+        props: ['sessions', 'telegramCode'],
 
         components: {
+            TelegramNotificationsForm,
             AppLayout,
             DeleteUserForm,
             JetSectionBorder,
