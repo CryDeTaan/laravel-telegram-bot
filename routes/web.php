@@ -30,5 +30,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
+Route::middleware(['auth:sanctum', 'verified'])->get('/notification', function () {
+    return Inertia::render('Notification');
+})->name('notification');
+
 Route::middleware(['auth:sanctum', 'verified'])->get('/telegram-code', [TelegramNotificationController::class, 'create']);
 Route::post('/telegram/webhook/2TcMuHkcvbc9lqJHppfCpvFXWwrX4yrZ5k6', [TelegramNotificationController::class, 'store']);
