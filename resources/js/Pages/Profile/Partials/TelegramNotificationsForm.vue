@@ -21,13 +21,15 @@
                 <p>
                     When enabling Telegram notifications, you will be taken to the Telegram website, or application and
                     asked to start a chat with the bot to receive notifications.
-                    {{ telegramCode }}
                 </p>
             </div>
 
             <div class="mt-5">
                 <div v-if="! telegramNotificationsEnabled">
-                    <jet-button type="button" :class="{ 'opacity-25': enabling }" :disabled="enabling">
+                    <jet-button
+                        @click="enableTelegramNotifications" type="button" :class="{ 'opacity-25': enabling }"
+                        :disabled="enabling"
+                    >
                         Enable
                     </jet-button>
                 </div>
@@ -58,13 +60,6 @@ export default defineComponent({
         JetDangerButton,
     },
 
-    props: {
-        telegramCode: {
-            type: String,
-            default: null
-        },
-    },
-
     data() {
         return {
             enabling: false,
@@ -75,8 +70,16 @@ export default defineComponent({
     },
 
     methods: {
-        enableTelegramNotifications() {
+        async enableTelegramNotifications() {
             this.enabling = true
+            try {
+                const response = await axios.get('/telegram-code');
+                window.open(response.data.telegramUrl, '_blank').focus();
+
+            } catch (error) {
+                // TODO: Display error to user.
+                console.error(error);
+            }
         },
 
     },
