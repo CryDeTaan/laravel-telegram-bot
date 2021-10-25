@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -30,5 +32,43 @@ class TelegramNotificationController extends Controller
             'telegramUrl' => $telegramUrl,
         ]);
 
+    }
+
+    /**
+     * Store Telegram Chat ID from telegram webhook message.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        try {
+            $messageText = $request->message['text'];
+        } catch (Exception $e) {
+            return response()->json([
+                'code'     => $e->getCode(),
+                'message'  => 'Accepted with error: \'' . $e->getMessage() . '\'',
+            ], 202);
+        }
+        // Check if the message matches the expected pattern.
+        if (!Str::of($messageText)->test('/^\/start\s[A-Za-z0-9]{35}$/')) {
+            return response('Accepted', 202);
+        }
+
+        // Cleanup the string
+        $userTempCode = Str::of($messageText)->remove('/start ');
+
+        // Get the User ID from the cache using the temp code as key.
+        $userId = Cache::store('telegram')->pull($userTempCode);
+        $user = User::find($userId);
+
+        // Get Telegram ID from the request.
+        $chatId = $request->message['chat']['id'];
+
+        // Update user with the Telegram Chat ID
+        $user->telegram_chat_id = $chatId;
+        $user->save();
+
+        return response('Success', 200);
     }
 }
