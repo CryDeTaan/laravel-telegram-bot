@@ -73,7 +73,7 @@ export default defineComponent({
         async enableTelegramNotifications() {
             this.enabling = true
             try {
-                const response = await axios.get('/telegram-code');
+                const response = await axios.get(route('telegram-temp-code'));
                 window.open(response.data.telegramUrl, '_blank').focus();
 
             } catch (error) {
