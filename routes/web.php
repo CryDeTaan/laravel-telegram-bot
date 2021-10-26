@@ -36,3 +36,4 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/notification', function (
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/telegram-code', [TelegramNotificationController::class, 'create']);
 Route::post('/telegram/webhook/2TcMuHkcvbc9lqJHppfCpvFXWwrX4yrZ5k6', [TelegramNotificationController::class, 'store']);
+Route::post('/telegram/notification', [TelegramNotificationController::class, 'send'])->name('send-notification');

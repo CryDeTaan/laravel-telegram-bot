@@ -71,4 +71,10 @@ class TelegramNotificationController extends Controller
 
         return response('Success', 200);
     }
+
+    public function send(Request $request)
+    {
+        return $request->all();
+
+    }
 }
