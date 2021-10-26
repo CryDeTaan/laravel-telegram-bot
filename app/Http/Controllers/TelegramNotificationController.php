@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\TelegramNotification;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -77,7 +78,10 @@ class TelegramNotificationController extends Controller
 
     public function send(Request $request)
     {
-        return $request->all();
+        $user = auth()->user();
+        $user->notify(new TelegramNotification($request->notification));
+
+        return back();
 
     }
 
