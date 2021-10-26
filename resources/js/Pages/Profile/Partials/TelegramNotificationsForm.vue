@@ -24,7 +24,7 @@
                 </p>
             </div>
 
-            <div class="mt-5">
+            <div class="flex items-center mt-5">
                 <div v-if="! telegramNotificationsEnabled">
                     <jet-button
                         @click="enableTelegramNotifications" type="button" :class="{ 'opacity-25': enabling }"
@@ -36,12 +36,16 @@
 
                 <div v-else>
                     <jet-danger-button
+                        @click="disableTelegramNotifications"
                         :class="{ 'opacity-25': disabling }"
                         :disabled="disabling"
                     >
                         Disable
                     </jet-danger-button>
                 </div>
+                <jet-action-message :on="disabling" class="ml-3">
+                    Done.
+                </jet-action-message>
             </div>
         </template>
     </jet-action-section>
@@ -52,20 +56,22 @@ import {defineComponent} from 'vue'
 import JetActionSection from '@/Jetstream/ActionSection.vue'
 import JetButton from '@/Jetstream/Button.vue'
 import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 
 export default defineComponent({
     components: {
         JetActionSection,
         JetButton,
         JetDangerButton,
+        JetActionMessage,
     },
+
+    props: ['telegramNotificationsEnabled'],
 
     data() {
         return {
             enabling: false,
             disabling: false,
-
-            telegramNotificationsEnabled: false,
         }
     },
 
@@ -80,6 +86,19 @@ export default defineComponent({
                 // TODO: Display error to user.
                 console.error(error);
             }
+        },
+
+        disableTelegramNotifications() {
+            this.$inertia.delete(
+                route('disable-telegram-notifications'),
+                {
+                    preserveScroll: true,
+                    onSuccess: page => {
+                        this.disabling = true
+                        setTimeout(() => { this.disabling = false; }, 2000);
+                    },
+                }
+            )
         },
 
     },

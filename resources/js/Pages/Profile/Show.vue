@@ -21,7 +21,7 @@
                 </div>
 
                 <div v-if="$page.props.jetstream.canUpdateProfileInformation">
-                    <telegram-notifications-form class="mt-10 sm:mt-0" />
+                    <telegram-notifications-form :telegramNotificationsEnabled="telegramNotificationsEnabled" class="mt-10 sm:mt-0" />
 
                     <jet-section-border />
                 </div>
@@ -56,7 +56,7 @@
     import TelegramNotificationsForm from "./Partials/TelegramNotificationsForm";
 
     export default defineComponent({
-        props: ['sessions'],
+        props: ['sessions', 'telegramNotificationsEnabled'],
 
         components: {
             TelegramNotificationsForm,

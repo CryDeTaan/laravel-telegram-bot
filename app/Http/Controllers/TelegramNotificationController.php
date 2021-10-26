@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Laravel\Jetstream\Jetstream;
 
 class TelegramNotificationController extends Controller
 {
@@ -75,6 +78,16 @@ class TelegramNotificationController extends Controller
     public function send(Request $request)
     {
         return $request->all();
+
+    }
+
+    public function destroy()
+    {
+        $user = auth()->user();
+        $user->telegram_chat_id = null;
+        $user->save();
+
+        return back();
 
     }
 }

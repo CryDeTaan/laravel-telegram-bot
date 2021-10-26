@@ -37,5 +37,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/notification', function (
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/telegram/notification', [TelegramNotificationController::class, 'send'])->name('send-notification');
     Route::get('/telegram/temp-code', [TelegramNotificationController::class, 'create'])->name('telegram-temp-code');
+    Route::delete('/telegram/notifications', [TelegramNotificationController::class, 'destroy'])->name('disable-telegram-notifications');
 });
 Route::post('/telegram/webhook/2TcMuHkcvbc9lqJHppfCpvFXWwrX4yrZ5k6', [TelegramNotificationController::class, 'store']);
