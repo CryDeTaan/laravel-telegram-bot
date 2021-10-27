@@ -22,7 +22,7 @@ class TelegramNotificationController extends Controller
      */
     public function create(Request $request)
     {
-        $telegramBotUrl = config('app.telegram_bot_url');
+        $telegramBotUrl = config('services.telegram-bot-api.bot_url');
 
         $userTempCode = Str::random(35);;
         Cache::store('telegram')
