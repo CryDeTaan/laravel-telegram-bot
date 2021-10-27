@@ -15,7 +15,7 @@ class VerifyCsrfToken extends Middleware
         // TODO: It would be nice to read this from
         //  config. Maybe something like this:
         //  https://laracasts.com/discuss/channels/laravel/define-except-in-middleware-using-env
-        '/telegram/webhook/2TcMuHkcvbc9lqJHppfCpvFXWwrX4yrZ5k6',
+        '/telegram/webhook/*',
 
         // ...
     ];
