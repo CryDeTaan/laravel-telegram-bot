@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class ConfigureTelegramWebhook extends Command
@@ -36,6 +37,7 @@ class ConfigureTelegramWebhook extends Command
 
     /**
      * Execute the console command.
+     * Automatically set or update the Telegram Bot's Webhook URL.
      *
      * @return int
      */
@@ -43,14 +45,16 @@ class ConfigureTelegramWebhook extends Command
     {
         $webhookSecret =  Str::random(45);
 
-        // Set or replace the Webhook Secret in the environment file, so it is
-        // automatically setup for this developer. This Webhook Secret is
-        // generated using random string and is set in the environment file.
         if (! $this->setWebhookSecretInEnvironmentFile($webhookSecret)) {
+            $this->error('And Error occurred');
             return;
         }
-
         $this->laravel['config']['services.telegram-bot-api.webhook'] = $webhookSecret;
+
+        $webhookUrl = $this->makeWebhookUrl();
+
+        // Configure the Telegram Bot with the Webhook
+        $this->configureTelegramBotWith($webhookUrl);
 
         return Command::SUCCESS;
     }
@@ -99,5 +103,51 @@ class ConfigureTelegramWebhook extends Command
         $escaped = preg_quote('='.$this->laravel['config']['services.telegram-bot-api.webhook'], '/');
 
         return "/^TELEGRAM_BOT_WEBHOOK{$escaped}/m";
+    }
+
+    /**
+     * Prepare the Webhook URL which will be used to configure the Telegram bot.
+     *
+     * @return string
+     */
+    protected function makeWebhookUrl()
+    {
+        $app_url = config('app.url');
+
+        $this->comment('Your current app base url is: ' . $app_url);
+        if (!$this->confirm("Do you want to use this url for your Telegram Bot webhook?", true)) {
+            $app_url = $this->ask('Please provide the base URL to use instead:');
+        }
+
+        return $app_url . '/telegram/webhook/' . config('services.telegram-bot-api.webhook');
+
+    }
+
+    /**
+     * Configure the Telegram bot with the provided Webhook URL.
+     *
+     * @return void
+     */
+    protected function configureTelegramBotWith(string $webhookUrl)
+    {
+        $telegramBaseApiUrl = 'https://api.telegram.org/bot';
+        $telegramApiToken = config('services.telegram-bot-api.token');
+        $allowedUpdates = '["message"]';
+
+        $response = Http::post($telegramBaseApiUrl . $telegramApiToken . '/setWebhook', [
+            'url' => $webhookUrl,
+            'allowed_updates' => $allowedUpdates,
+        ]);
+        if ($response->failed()) {
+            $this->error($response->json()['description']);
+            return;
+        }
+
+        $response = Http::get($telegramBaseApiUrl . $telegramApiToken . '/getWebhookInfo');
+        if ($response->failed()) {
+            $this->error($response->json()['description']);
+            return;
+        }
+        $this->info("The Telegram Bot Webhook was create successfully:\n" . $response->json()['result']['url']);
     }
 }
