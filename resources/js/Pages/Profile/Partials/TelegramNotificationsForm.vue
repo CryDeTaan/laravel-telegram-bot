@@ -1,7 +1,7 @@
 <template>
     <jet-action-section>
         <template #title>
-            Telegram Deployment Notifications
+            Telegram Notifications
         </template>
 
         <template #description>
