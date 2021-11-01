@@ -65,7 +65,7 @@ Start the conversation to create a bot, it's like having a conversation.
 </p>
 
 Once the BotFather congratulates you, you will find two pieces of information that you need to capture in the .env file. 
-1. The URL, you can copy it from the message from the GodFather and update the `TELEGRAM_BOT_URL` in this case it is https://t.me/laravel_telegram_test_bot.
+1. The URL, you can copy it from the message from the BotFather and update the `TELEGRAM_BOT_URL` in this case it is https://t.me/laravel_telegram_test_bot.
 2. Update the `TELEGRAM_BOT_TOKEN` with the API Token, in this case `2017805637:AAFAB6wvnYC5aGzm07_hqUIVokMy82Z6WpA`
 
 The values in the `.env` should now look something like this:
