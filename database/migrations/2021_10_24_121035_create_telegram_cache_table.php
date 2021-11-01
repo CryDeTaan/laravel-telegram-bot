@@ -33,7 +33,7 @@ class CreateTelegramCacheTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cache');
-        Schema::dropIfExists('cache_locks');
+        Schema::dropIfExists('telegram_cache');
+        Schema::dropIfExists('telegram_cache_locks');
     }
 }
