@@ -43,7 +43,7 @@ valet link && valet open
 At this point an application will be up and running and can be accessed using a browser where users can register and login as well.
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/11268952/139319188-1b08aeed-e6ce-4c8a-9e51-389b661a5cbc.png" alt="Welcome Page">
+<img src="https://abstractentropy.com/content/images/size/w1000/2023/01/image.png" alt="Welcome Page">
 </p>
 
 ### Setting up the Telegram bot
@@ -96,7 +96,7 @@ navigate to the profile section, find the drop-down to the top right of the page
 option to enable Telegram notifications.
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/11268952/139319869-3d81ba5b-1ae5-493b-80ce-3f14ce7ea308.png" alt="Enable Telegram Notifications">
+<img src="https://abstractentropy.com/content/images/size/w1000/2023/01/image-4.png" alt="Enable Telegram Notifications">
 </p>
 
 When clicking on the enable button, a new tab will open prompting you to Open Telegram.
@@ -116,7 +116,7 @@ Head back to the web app and select the Notification tab. Entering a message her
 deliver the message to Telegram in the chat with your bot.     
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/11268952/139320868-32f766a0-0f70-4dba-81ae-d83559e07c20.png" alt="Send test notification">
+<img src="https://abstractentropy.com/content/images/size/w1000/2023/01/image-3.png" alt="Send test notification">
 </p>
 
 <p align="center">

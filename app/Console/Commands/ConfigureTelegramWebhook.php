@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 class ConfigureTelegramWebhook extends Command
 {
     Use ConfirmableTrait;
-
     /**
      * The name and signature of the console command.
      *
@@ -24,16 +23,6 @@ class ConfigureTelegramWebhook extends Command
      * @var string
      */
     protected $description = 'Configures the Telegram Webhook.';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.

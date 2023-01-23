@@ -1,155 +1,93 @@
-<template>
-    <jet-form-section @submitted="updateProfileInformation">
-        <template #title>
-            Profile Information
-        </template>
+<script setup>
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 
-        <template #description>
-            Update your account's profile information and email address.
-        </template>
+const props = defineProps({
+    mustVerifyEmail: Boolean,
+    status: String,
+});
 
-        <template #form>
-            <!-- Profile Photo -->
-            <div class="col-span-6 sm:col-span-4" v-if="$page.props.jetstream.managesProfilePhotos">
-                <!-- Profile Photo File Input -->
-                <input type="file" class="hidden"
-                            ref="photo"
-                            @change="updatePhotoPreview">
+const user = usePage().props.auth.user;
 
-                <jet-label for="photo" value="Photo" />
-
-                <!-- Current Profile Photo -->
-                <div class="mt-2" v-show="! photoPreview">
-                    <img :src="user.profile_photo_url" :alt="user.name" class="rounded-full h-20 w-20 object-cover">
-                </div>
-
-                <!-- New Profile Photo Preview -->
-                <div class="mt-2" v-show="photoPreview">
-                    <span class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
-                          :style="'background-image: url(\'' + photoPreview + '\');'">
-                    </span>
-                </div>
-
-                <jet-secondary-button class="mt-2 mr-2" type="button" @click.prevent="selectNewPhoto">
-                    Select A New Photo
-                </jet-secondary-button>
-
-                <jet-secondary-button type="button" class="mt-2" @click.prevent="deletePhoto" v-if="user.profile_photo_path">
-                    Remove Photo
-                </jet-secondary-button>
-
-                <jet-input-error :message="form.errors.photo" class="mt-2" />
-            </div>
-
-            <!-- Name -->
-            <div class="col-span-6 sm:col-span-4">
-                <jet-label for="name" value="Name" />
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autocomplete="name" />
-                <jet-input-error :message="form.errors.name" class="mt-2" />
-            </div>
-
-            <!-- Email -->
-            <div class="col-span-6 sm:col-span-4">
-                <jet-label for="email" value="Email" />
-                <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />
-                <jet-input-error :message="form.errors.email" class="mt-2" />
-            </div>
-        </template>
-
-        <template #actions>
-            <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                Saved.
-            </jet-action-message>
-
-            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Save
-            </jet-button>
-        </template>
-    </jet-form-section>
-</template>
-
-<script>
-    import { defineComponent } from 'vue'
-    import JetButton from '@/Jetstream/Button.vue'
-    import JetFormSection from '@/Jetstream/FormSection.vue'
-    import JetInput from '@/Jetstream/Input.vue'
-    import JetInputError from '@/Jetstream/InputError.vue'
-    import JetLabel from '@/Jetstream/Label.vue'
-    import JetActionMessage from '@/Jetstream/ActionMessage.vue'
-    import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
-
-    export default defineComponent({
-        components: {
-            JetActionMessage,
-            JetButton,
-            JetFormSection,
-            JetInput,
-            JetInputError,
-            JetLabel,
-            JetSecondaryButton,
-        },
-
-        props: ['user'],
-
-        data() {
-            return {
-                form: this.$inertia.form({
-                    _method: 'PUT',
-                    name: this.user.name,
-                    email: this.user.email,
-                    photo: null,
-                }),
-
-                photoPreview: null,
-            }
-        },
-
-        methods: {
-            updateProfileInformation() {
-                if (this.$refs.photo) {
-                    this.form.photo = this.$refs.photo.files[0]
-                }
-
-                this.form.post(route('user-profile-information.update'), {
-                    errorBag: 'updateProfileInformation',
-                    preserveScroll: true,
-                    onSuccess: () => (this.clearPhotoFileInput()),
-                });
-            },
-
-            selectNewPhoto() {
-                this.$refs.photo.click();
-            },
-
-            updatePhotoPreview() {
-                const photo = this.$refs.photo.files[0];
-
-                if (! photo) return;
-
-                const reader = new FileReader();
-
-                reader.onload = (e) => {
-                    this.photoPreview = e.target.result;
-                };
-
-                reader.readAsDataURL(photo);
-            },
-
-            deletePhoto() {
-                this.$inertia.delete(route('current-user-photo.destroy'), {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        this.photoPreview = null;
-                        this.clearPhotoFileInput();
-                    },
-                });
-            },
-
-            clearPhotoFileInput() {
-                if (this.$refs.photo?.value) {
-                    this.$refs.photo.value = null;
-                }
-            },
-        },
-    })
+const form = useForm({
+    name: user.name,
+    email: user.email,
+});
 </script>
+
+<template>
+    <section>
+        <header>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Profile Information</h2>
+
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Update your account's profile information and email address.
+            </p>
+        </header>
+
+        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
+            <div>
+                <InputLabel for="name" value="Name" />
+
+                <TextInput
+                    id="name"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.name"
+                    required
+                    autofocus
+                    autocomplete="name"
+                />
+
+                <InputError class="mt-2" :message="form.errors.name" />
+            </div>
+
+            <div>
+                <InputLabel for="email" value="Email" />
+
+                <TextInput
+                    id="email"
+                    type="email"
+                    class="mt-1 block w-full"
+                    v-model="form.email"
+                    required
+                    autocomplete="email"
+                />
+
+                <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div v-if="props.mustVerifyEmail && user.email_verified_at === null">
+                <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
+                    Your email address is unverified.
+                    <Link
+                        :href="route('verification.send')"
+                        method="post"
+                        as="button"
+                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                    >
+                        Click here to re-send the verification email.
+                    </Link>
+                </p>
+
+                <div
+                    v-show="props.status === 'verification-link-sent'"
+                    class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
+                >
+                    A new verification link has been sent to your email address.
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+
+                <Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                </Transition>
+            </div>
+        </form>
+    </section>
+</template>

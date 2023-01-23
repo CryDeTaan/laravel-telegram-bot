@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\TelegramNotificationController;
-
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\TelegramNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,18 +26,30 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/notification', function () {
-    return Inertia::render('Notification');
-})->name('notification');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::post('/telegram/notification', [TelegramNotificationController::class, 'send'])->name('send-notification');
-    Route::get('/telegram/temp-url', [TelegramNotificationController::class, 'create'])->name('telegram-temp-url');
-    Route::delete('/telegram/notifications', [TelegramNotificationController::class, 'destroy'])->name('disable-telegram-notifications');
+    Route::get('/notification', function () {
+        return Inertia::render('Notification');
+    })->name('notification');
+
+    Route::post('/telegram/notification', [TelegramNotificationController::class, 'send'])
+        ->name('send-notification');
+
+    Route::get('/telegram/temp-url', [TelegramNotificationController::class, 'create'])
+        ->name('telegram-temp-url');
+
+    Route::delete('/telegram/notifications', [TelegramNotificationController::class, 'destroy'])
+        ->name('disable-telegram-notifications');
 });
 
-Route::post('/telegram/webhook/'.config('services.telegram-bot-api.webhook'), [TelegramNotificationController::class, 'store']);
+Route::post('/telegram/webhook/'.config('services.telegram-bot-api.webhook'),
+    [TelegramNotificationController::class, 'store']);
+
+require __DIR__.'/auth.php';

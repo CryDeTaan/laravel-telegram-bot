@@ -18,6 +18,7 @@ return [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
     ],
 
     'postmark' => [
@@ -30,15 +31,6 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Telegram Bot
-    |--------------------------------------------------------------------------
-    |
-    | These values are used for the Telegram Bot to configure a user to receive
-    | notifications using the Telegram Bot.
-    |
-    */
     'telegram-bot-api' => [
         'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR BOT TOKEN HERE'),
         'bot_url' => env('TELEGRAM_BOT_URL'),
